@@ -21,7 +21,6 @@ extern "C"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/stat.h>
 #ifndef _WIN32
 #include <unistd.h>
 #else
@@ -40,110 +39,43 @@ extern "C"
 bool
 rcutils_get_cwd(char * buffer, size_t max_length)
 {
-  if (NULL == buffer) {
-    return false;
-  }
-#ifdef _WIN32
-  if (NULL == _getcwd(buffer, (int)max_length)) {
-    return false;
-  }
-#else
-  if (NULL == getcwd(buffer, max_length)) {
-    return false;
-  }
-#endif  // _WIN32
   return true;
 }
 
 bool
 rcutils_is_directory(const char * abs_path)
 {
-  struct stat buf;
-  if (stat(abs_path, &buf) < 0) {
-    return false;
-  }
-#ifdef _WIN32
-  return (buf.st_mode & S_IFDIR) == S_IFDIR;
-#else
-  return S_ISDIR(buf.st_mode);
-#endif  // _WIN32
+    return true;
 }
 
 bool
 rcutils_is_file(const char * abs_path)
 {
-  struct stat buf;
-  if (stat(abs_path, &buf) < 0) {
-    return false;
-  }
-#ifdef _WIN32
-  return (buf.st_mode & S_IFREG) == S_IFREG;
-#else
-  return S_ISREG(buf.st_mode);
-#endif  // _WIN32
+    return true;
 }
 
 bool
 rcutils_exists(const char * abs_path)
 {
-  struct stat buf;
-  if (stat(abs_path, &buf) < 0) {
-    return false;
-  }
-  return true;
+    return true;
 }
 
 bool
 rcutils_is_readable(const char * abs_path)
 {
-  struct stat buf;
-  if (stat(abs_path, &buf) < 0) {
-    return false;
-  }
-#ifdef _WIN32
-  if (!(buf.st_mode & _S_IREAD)) {
-#else
-  if (!(buf.st_mode & S_IRUSR)) {
-#endif  // _WIN32
-    return false;
-  }
-  return true;
+    return true;
 }
 
 bool
 rcutils_is_writable(const char * abs_path)
 {
-  struct stat buf;
-  if (stat(abs_path, &buf) < 0) {
-    return false;
-  }
-#ifdef _WIN32
-  if (!(buf.st_mode & _S_IWRITE)) {
-#else
-  if (!(buf.st_mode & S_IWUSR)) {
-#endif  // _WIN32
-    return false;
-  }
-  return true;
+   return true;
 }
 
 bool
 rcutils_is_readable_and_writable(const char * abs_path)
 {
-  struct stat buf;
-  if (stat(abs_path, &buf) < 0) {
-    return false;
-  }
-#ifdef _WIN32
-  // NOTE(marguedas) on windows all writable files are readable
-  // hence the following check is equivalent to "& _S_IWRITE"
-  if (!((buf.st_mode & _S_IWRITE) && (buf.st_mode & _S_IREAD))) {
-#else
-  if (!((buf.st_mode & S_IWUSR) && (buf.st_mode & S_IRUSR))) {
-#endif  // _WIN32
-    return false;
-  }
-  return true;
+    return true;
 }
 
 char *

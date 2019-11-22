@@ -39,15 +39,7 @@ extern "C"
 #include "rcutils/types/rcutils_ret.h"
 #include "rcutils/visibility_control.h"
 
-#ifdef __STDC_LIB_EXT1__
-// Limit the buffer size in the `fwrite` call to give an upper bound to buffer overrun in the case
-// of non-null terminated `msg`.
-#define RCUTILS_SAFE_FWRITE_TO_STDERR(msg) \
-  do {fwrite(msg, sizeof(char), strnlen_s(msg, 4096), stderr);} while (0)
-#else
-#define RCUTILS_SAFE_FWRITE_TO_STDERR(msg) \
-  do {fwrite(msg, sizeof(char), strlen(msg), stderr);} while (0)
-#endif
+#define RCUTILS_SAFE_FWRITE_TO_STDERR(msg) 
 
 // fixed constraints
 #define RCUTILS_ERROR_STATE_LINE_NUMBER_STR_MAX_LENGTH 20  // "18446744073709551615"
@@ -197,8 +189,7 @@ rcutils_set_error_state(const char * error_string, const char * file, size_t lin
  *
  * \param[in] msg The error message to be set.
  */
-#define RCUTILS_SET_ERROR_MSG(msg) \
-  do {rcutils_set_error_state(msg, __FILE__, __LINE__);} while (0)
+#define RCUTILS_SET_ERROR_MSG(msg) 
 
 /// Set the error message using a format string and format arguments.
 /**
@@ -209,17 +200,7 @@ rcutils_set_error_state(const char * error_string, const char * file, size_t lin
  * \param[in] format_string The string to be used as the format of the error message.
  * \param[in] ... Arguments for the format string.
  */
-#define RCUTILS_SET_ERROR_MSG_WITH_FORMAT_STRING(format_string, ...) \
-  do { \
-    char output_msg[RCUTILS_ERROR_MESSAGE_MAX_LENGTH]; \
-    int ret = rcutils_snprintf(output_msg, sizeof(output_msg), format_string, __VA_ARGS__); \
-    if (ret < 0) { \
-      RCUTILS_SAFE_FWRITE_TO_STDERR("Failed to call snprintf for error message formatting\n"); \
-    } else { \
-      RCUTILS_SET_ERROR_MSG(output_msg); \
-    } \
-  } while (0)
-
+#define RCUTILS_SET_ERROR_MSG_WITH_FORMAT_STRING(format_string, ...)
 /// Return `true` if the error is set, otherwise `false`.
 RCUTILS_PUBLIC
 RCUTILS_WARN_UNUSED

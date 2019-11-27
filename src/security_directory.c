@@ -23,7 +23,7 @@
 # pragma clang diagnostic push
 # pragma clang diagnostic ignored "-Wembedded-directive"
 #endif
-#include "tinydir/tinydir.h"
+// #include "tinydir/tinydir.h"
 #ifdef __clang__
 # pragma clang diagnostic pop
 #endif
@@ -89,36 +89,7 @@ static bool get_best_matching_directory(
   const char * node_name,
   char * matched_name)
 {
-  size_t max_match_length = 0;
-  tinydir_dir dir;
-  if (NULL == base_dir || NULL == node_name || NULL == matched_name) {
-    return false;
-  }
-  if (-1 == tinydir_open(&dir, base_dir)) {
-    return false;
-  }
-  while (dir.has_next) {
-    tinydir_file file;
-    if (-1 == tinydir_readfile(&dir, &file)) {
-      goto cleanup;
-    }
-    if (file.is_dir) {
-      size_t matched_name_length = strnlen(file.name, sizeof(file.name) - 1);
-      if (0 ==
-        strncmp(file.name, node_name,
-        matched_name_length) && matched_name_length > max_match_length)
-      {
-        max_match_length = matched_name_length;
-        memcpy(matched_name, file.name, max_match_length);
-      }
-    }
-    if (-1 == tinydir_next(&dir)) {
-      goto cleanup;
-    }
-  }
-cleanup:
-  tinydir_close(&dir);
-  return max_match_length > 0;
+  return true;
 }
 
 char * exact_match_lookup(
@@ -156,7 +127,7 @@ char * prefix_match_lookup(
 {
   // Perform longest prefix match for the node's name in directory <root dir>/<namespace>.
   char * node_secure_root = NULL;
-  char matched_dir[_TINYDIR_FILENAME_MAX] = {0};
+  char matched_dir[50] = {0};
   char * base_lookup_dir = NULL;
   if (strlen(node_namespace) == 1) {
     base_lookup_dir = (char *) ros_secure_root_env;
@@ -262,3 +233,4 @@ char * rcutils_get_secure_root(
   allocator->deallocate(ros_secure_root_env, allocator->state);
   return node_secure_root;
 }
+

@@ -55,9 +55,23 @@ extern "C"
   #else
     #error "Unknown Apple platform"
   #endif
-#else
+#elif defined __clang__
+  #if __has_extension(c_thread_local)
+    #define RCUTILS_THREAD_LOCAL _Thread_local
+  #else
+    #define RCUTILS_THREAD_LOCAL
+  #endif
+#elif defined __GNUC__
 // Some other non-Windows, non-cygwin, non-apple OS
-  #define RCUTILS_THREAD_LOCAL _Thread_local
+  #if (__GNUC__ > 4) || (__GNUC__ == 4 && __GNUC_MINOR__ >= 9)
+    #define RCUTILS_THREAD_LOCAL _Thread_local
+  #else
+    #define RCUTILS_THREAD_LOCAL
+  #endif
+#elif defined __CC_ARM
+  #define RCUTILS_THREAD_LOCAL __declspec(thread)
+#else
+  #define RCUTILS_THREAD_LOCAL
 #endif
 
 #define RCUTILS_STRINGIFY_IMPL(x) #x

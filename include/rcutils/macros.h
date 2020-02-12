@@ -57,7 +57,7 @@ extern "C"
   #endif
 #else
 // Some other non-Windows, non-cygwin, non-apple OS
-  #define RCUTILS_THREAD_LOCAL _Thread_local
+  #define RCUTILS_THREAD_LOCAL
 #endif
 
 #define RCUTILS_STRINGIFY_IMPL(x) #x

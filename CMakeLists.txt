@@ -29,9 +29,21 @@ else()
   set(time_impl_c src/time_unix.c)
 endif()
 
-target_compile_definitions(${PROJECT_NAME} PRIVATE "RCUTILS_NO_FILESYSTEM") 
-target_compile_definitions(${PROJECT_NAME} PRIVATE "RCUTILS_NO_THREAD_SUPPORT") 
-target_compile_definitions(${PROJECT_NAME} PRIVATE "RCUTILS_AVOID_DYNAMIC_ALLOCATION") 
+if(RCUTILS_NO_FILESYSTEM)
+  add_compile_options(-DRCUTILS_NO_FILESYSTEM=1)
+endif()
+
+if(RCUTILS_NO_THREAD_SUPPORT)
+  add_compile_options(-DRCUTILS_NO_THREAD_SUPPORT=1)
+endif()
+
+if(RCUTILS_AVOID_DYNAMIC_ALLOCATION)
+  add_compile_options(-DRCUTILS_AVOID_DYNAMIC_ALLOCATION=1)
+endif()
+
+# target_compile_definitions(${PROJECT_NAME} PRIVATE "RCUTILS_NO_FILESYSTEM") 
+# target_compile_definitions(${PROJECT_NAME} PRIVATE "RCUTILS_NO_THREAD_SUPPORT") 
+# target_compile_definitions(${PROJECT_NAME} PRIVATE "RCUTILS_AVOID_DYNAMIC_ALLOCATION") 
 
 configure_file (
     "${PROJECT_SOURCE_DIR}/include/rcutils/error_handling.h.in"

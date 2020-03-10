@@ -28,7 +28,9 @@ extern "C"
 
 // Note: this block was migrated from rmw/macros.h
 // This block either sets RCUTILS_THREAD_LOCAL or RCUTILS_THREAD_LOCAL_PTHREAD.
-#if defined _WIN32 || defined __CYGWIN__
+#if RCUTILS_NO_THREAD_SUPPORT
+    #define RCUTILS_THREAD_LOCAL
+#elif defined _WIN32 || defined __CYGWIN__
 // Windows or Cygwin
   #define RCUTILS_THREAD_LOCAL __declspec(thread)
 #elif defined __APPLE__

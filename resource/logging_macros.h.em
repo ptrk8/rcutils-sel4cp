@@ -20,6 +20,7 @@
 #define RCUTILS__LOGGING_MACROS_H_
 
 #include "rcutils/logging.h"
+#include "rcutils/configuration_flags.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -43,6 +44,11 @@ extern "C"
  * in your build options to compile out anything below that severity.
  * Use RCUTILS_LOG_MIN_SEVERITY_NONE to compile out all macros.
  */
+
+#ifdef RCUTILS_NO_LOGGING
+#define RCUTILS_LOG_MIN_SEVERITY RCUTILS_LOG_MIN_SEVERITY_NONE
+#endif //RCUTILS_NO_LOGGING
+
 #ifndef RCUTILS_LOG_MIN_SEVERITY
 #define RCUTILS_LOG_MIN_SEVERITY RCUTILS_LOG_MIN_SEVERITY_DEBUG
 #endif
@@ -63,6 +69,7 @@ extern "C"
  * \param name The name of the logger
  * \param ... The format string, followed by the variable arguments for the format string
  */
+#ifdef RCUTILS_NO_LOGGING
 #define RCUTILS_LOG_COND_NAMED(severity, condition_before, condition_after, name, ...) \
   do { \
     RCUTILS_LOGGING_AUTOINIT \
@@ -73,6 +80,9 @@ extern "C"
       condition_after \
     } \
   } while (0)
+#else
+#define RCUTILS_LOG_COND_NAMED(severity, condition_before, condition_after, name, ...)
+#endif //RCUTILS_NO_LOGGING
 
 ///@@{
 /**

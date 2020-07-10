@@ -24,6 +24,7 @@
 #include "rcutils/time.h"
 #include "rcutils/types/rcutils_ret.h"
 #include "rcutils/visibility_control.h"
+#include "rcutils/configuration_flags.h"
 
 #ifdef __cplusplus
 extern "C"
@@ -538,6 +539,10 @@ void rcutils_logging_console_output_handler(
  * Usually it is unnecessary to call the macro directly.
  * All logging macros ensure that this has been called once.
  */
+
+#ifdef RCUTILS_NO_LOGGING
+#define RCUTILS_LOGGING_AUTOINIT
+#else
 #define RCUTILS_LOGGING_AUTOINIT \
   if (RCUTILS_UNLIKELY(!g_rcutils_logging_initialized)) { \
     rcutils_ret_t ret = rcutils_logging_initialize(); \
@@ -550,6 +555,7 @@ void rcutils_logging_console_output_handler(
       rcutils_reset_error(); \
     } \
   }
+#endif // RCUTILS_NO_LOGGING
 
 #ifdef __cplusplus
 }

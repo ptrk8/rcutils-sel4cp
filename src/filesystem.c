@@ -127,7 +127,10 @@ rcutils_is_file(const char * abs_path)
 //  return false;
     FILINFO fno;
     FRESULT res = f_stat(abs_path, &fno);
-    return FR_OK == res;
+    if (FR_OK == res) {
+        return (fno.fattrib & AM_DIR) == 0;
+    }
+    return false;
 #else
   struct stat buf;
   if (stat(abs_path, &buf) < 0) {
@@ -311,9 +314,17 @@ bool
 rcutils_mkdir(const char * abs_path)
 {
 #ifdef RCUTILS_NO_FILESYSTEM
-  (void) abs_path;
-  RCUTILS_SET_ERROR_MSG("not available filesystem");
-  return false;
+//  (void) abs_path;
+//  RCUTILS_SET_ERROR_MSG("not available filesystem");
+//  return false;
+    if (NULL == abs_path) {
+        return false;
+    }
+    if (abs_path[0] == '\0') {
+        return false;
+    }
+    FRESULT res = f_mkdir(abs_path);
+    return FR_OK == res;
 #else
   if (NULL == abs_path) {
     return false;

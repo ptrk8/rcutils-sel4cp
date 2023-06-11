@@ -58,18 +58,20 @@ extern "C"
 # define RCUTILS_PATH_DELIMITER "/"
 #endif  // _WIN32
 
-#ifdef RCUTILS_NO_FILESYSTEM
-typedef int DIR;
-#endif  // _RCUTILS_NO_FILESYSTEM
-typedef struct rcutils_dir_iter_state_t
-{
-#ifdef _WIN32
-  HANDLE handle;
-  WIN32_FIND_DATA data;
-#else
-  DIR * dir;
-#endif
-} rcutils_dir_iter_state_t;
+#include "ff.h"
+
+//#ifdef RCUTILS_NO_FILESYSTEM
+//typedef int DIR;
+//#endif  // _RCUTILS_NO_FILESYSTEM
+//typedef struct rcutils_dir_iter_state_t
+//{
+//#ifdef _WIN32
+//  HANDLE handle;
+//  WIN32_FIND_DATA data;
+//#else
+//  DIR * dir;
+//#endif
+//} rcutils_dir_iter_state_t;
 
 bool
 rcutils_get_cwd(char * buffer, size_t max_length)
@@ -120,9 +122,12 @@ bool
 rcutils_is_file(const char * abs_path)
 {
 #ifdef RCUTILS_NO_FILESYSTEM
-  (void) abs_path;
-  RCUTILS_SET_ERROR_MSG("not available filesystem");
-  return false;
+//  (void) abs_path;
+//  RCUTILS_SET_ERROR_MSG("not available filesystem");
+//  return false;
+    FILINFO fno;
+    FRESULT res = f_stat(abs_path, &fno);
+    return FR_OK == res;
 #else
   struct stat buf;
   if (stat(abs_path, &buf) < 0) {
@@ -140,9 +145,12 @@ bool
 rcutils_exists(const char * abs_path)
 {
 #ifdef RCUTILS_NO_FILESYSTEM
-  (void) abs_path;
-  RCUTILS_SET_ERROR_MSG("not available filesystem");
-  return false;
+//  (void) abs_path;
+//  RCUTILS_SET_ERROR_MSG("not available filesystem");
+//  return false;
+    FILINFO fno;
+    FRESULT res = f_stat(abs_path, &fno);
+    return FR_OK == res;
 #else
   struct stat buf;
   if (stat(abs_path, &buf) < 0) {

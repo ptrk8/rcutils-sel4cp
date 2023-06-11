@@ -7,6 +7,7 @@ option(RCUTILS_NO_FILESYSTEM "Disable filesystem usage." OFF)
 option(RCUTILS_AVOID_DYNAMIC_ALLOCATION "Disable dynamic allocations." OFF)
 option(RCUTILS_NO_64_ATOMIC "Enable alternative support for 64 bits atomic operations in platforms with no native support." OFF)
 option(RCUTILS_MICROROS "Flag for building micro-ROS." ON)
+option(RCUTILS_SEL4CP "Flag for building rcutils for seL4CP." ON)
 
 # Default to C11
 if(NOT CMAKE_C_STANDARD)
@@ -127,6 +128,7 @@ add_library(
 target_include_directories(${PROJECT_NAME} PUBLIC
   "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
   "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>"
+  "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/fatfs>"
   "$<INSTALL_INTERFACE:include/${PROJECT_NAME}>")
 
 # Causes the visibility macros to use dllexport rather than dllimport,
@@ -607,5 +609,5 @@ ament_export_dependencies(ament_cmake)
 ament_package()
 
 install(
-  DIRECTORY include/ ${CMAKE_CURRENT_BINARY_DIR}/include/
+  DIRECTORY include/ ${CMAKE_CURRENT_BINARY_DIR}/include/ include/fatfs/
   DESTINATION include/${PROJECT_NAME})

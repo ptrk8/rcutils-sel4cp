@@ -104,8 +104,14 @@ rcutils_get_cwd(char *buffer, size_t max_length) {
 bool
 rcutils_is_directory(const char *abs_path) {
 #ifdef RCUTILS_NO_FILESYSTEM
-    (void) abs_path;
-    RCUTILS_SET_ERROR_MSG("not available filesystem");
+//    (void) abs_path;
+//    RCUTILS_SET_ERROR_MSG("not available filesystem");
+//    return false;
+    FILINFO fno;
+    FRESULT res = f_stat(abs_path, &fno);
+    if (FR_OK == res) {
+        return fno.fattrib == AM_DIR;
+    }
     return false;
 #else
     struct stat buf;

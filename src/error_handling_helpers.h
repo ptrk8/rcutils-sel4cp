@@ -34,7 +34,9 @@
 #ifndef __STDC_WANT_LIB_EXT1__
 #define __STDC_WANT_LIB_EXT1__ 1  // indicate we would like memmove_s if available
 #endif
+#ifndef RCUTILS_NO_ASSERT
 #include <assert.h>
+#endif
 #include <stdlib.h>
 #include <string.h>
 
@@ -50,9 +52,11 @@ static
 size_t
 __rcutils_copy_string(char * dst, size_t dst_size, const char * src)
 {
+#ifndef RCUTILS_NO_ASSERT
   assert(dst != NULL);
   assert(dst_size > 0);
   assert(src != NULL);
+#endif
   // doesn't matter how long src actually is if it is longer than dst, so limit to dst + 1
   size_t src_length = strlen(src);
   size_t size_to_copy = src_length;
@@ -90,7 +94,9 @@ static
 void
 __rcutils_reverse_str(char * string_in, size_t string_len)
 {
+#ifndef RCUTILS_NO_ASSERT
   assert(string_in != NULL);
+#endif
   if (0 == string_len) {
     return;
   }
@@ -109,8 +115,10 @@ void
 __rcutils_convert_uint64_t_into_c_str(uint64_t number, char * buffer, size_t buffer_size)
 {
 #if !defined(RCUTILS_AVOID_DYNAMIC_ALLOCATION)
+#ifndef RCUTILS_NO_ASSERT
   assert(buffer != NULL);
   assert(buffer_size >= 21);
+#endif
   (void)buffer_size;  // prevent warning in release builds where there is no assert(...)
   size_t i = 0;
 
@@ -143,11 +151,14 @@ __rcutils_format_error_string(
   const rcutils_error_state_t * error_state)
 {
 #if !defined(RCUTILS_AVOID_DYNAMIC_ALLOCATION)
+#ifndef RCUTILS_NO_ASSERT
   assert(error_string != NULL);
   assert(error_state != NULL);
+#endif
   static const char format_1[] = ", at ";
   static const char format_2[] = ":";
   char line_number_buffer[21];
+#ifndef RCUTILS_NO_ASSERT
   static_assert(
     sizeof(error_string->str) == (
       sizeof(error_state->message) +
@@ -157,6 +168,7 @@ __rcutils_format_error_string(
       sizeof(line_number_buffer) - 1 /* minus the null-term */ +
       1  // null terminator
     ), "math error in static string formatting");
+#endif
   char * offset = error_string->str;
   size_t bytes_left = sizeof(error_string->str);
   size_t written = __rcutils_copy_string(offset, bytes_left, error_state->message);

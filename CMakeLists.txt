@@ -8,6 +8,7 @@ option(RCUTILS_AVOID_DYNAMIC_ALLOCATION "Disable dynamic allocations." OFF)
 option(RCUTILS_NO_64_ATOMIC "Enable alternative support for 64 bits atomic operations in platforms with no native support." OFF)
 option(RCUTILS_MICROROS "Flag for building micro-ROS." ON)
 option(RCUTILS_SEL4CP "Flag for building rcutils for seL4CP." ON)
+option(RCUTILS_NO_ASSERT "Flag for building rcutils for seL4CP." OFF)
 
 # Default to C11
 if(NOT CMAKE_C_STANDARD)

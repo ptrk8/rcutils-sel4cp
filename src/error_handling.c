@@ -79,7 +79,7 @@ static
 bool
 __same_string(const char * str1, const char * str2, size_t count)
 {
-#if RCUTILS_NO_ASSERT == 0
+#if !defined(RCUTILS_NO_ASSERT)
   assert(NULL != str1);
   assert(NULL != str2);
 #endif
@@ -93,7 +93,7 @@ __format_overwriting_error_state_message(
   size_t buffer_size,
   const rcutils_error_state_t * new_error_state)
 {
-#if RCUTILS_NO_ASSERT == 0
+#if !defined(RCUTILS_NO_ASSERT)
   assert(NULL != buffer);
   assert(0 != buffer_size);
   assert(SIZE_MAX > buffer_size);
@@ -203,7 +203,7 @@ rcutils_set_error_state(
   // Only warn of overwritting if the new error is different from the old ones.
   size_t characters_to_compare = strnlen(error_string, RCUTILS_ERROR_MESSAGE_MAX_LENGTH);
   // assumption is that message length is <= max error string length
-#if RCUTILS_NO_ASSERT == 0
+#if !defined(RCUTILS_NO_ASSERT)
   static_assert(
     sizeof(gtls_rcutils_error_state.message) <= sizeof(gtls_rcutils_error_string.str),
     "expected error state's max message length to be less than or equal to error string max");

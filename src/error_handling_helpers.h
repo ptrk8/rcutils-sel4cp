@@ -36,6 +36,7 @@
 #endif
 #ifndef RCUTILS_NO_ASSERT
 #define RCUTILS_NO_ASSERT 0
+#endif
 #if RCUTILS_NO_ASSERT == 0
 #include <assert.h>
 #endif

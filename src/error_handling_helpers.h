@@ -35,6 +35,8 @@
 #define __STDC_WANT_LIB_EXT1__ 1  // indicate we would like memmove_s if available
 #endif
 #ifndef RCUTILS_NO_ASSERT
+#define RCUTILS_NO_ASSERT 0
+#if RCUTILS_NO_ASSERT == 0
 #include <assert.h>
 #endif
 #include <stdlib.h>
@@ -52,7 +54,7 @@ static
 size_t
 __rcutils_copy_string(char * dst, size_t dst_size, const char * src)
 {
-#ifndef RCUTILS_NO_ASSERT
+#if RCUTILS_NO_ASSERT == 0
   assert(dst != NULL);
   assert(dst_size > 0);
   assert(src != NULL);
@@ -94,7 +96,7 @@ static
 void
 __rcutils_reverse_str(char * string_in, size_t string_len)
 {
-#ifndef RCUTILS_NO_ASSERT
+#if RCUTILS_NO_ASSERT == 0
   assert(string_in != NULL);
 #endif
   if (0 == string_len) {
@@ -115,7 +117,7 @@ void
 __rcutils_convert_uint64_t_into_c_str(uint64_t number, char * buffer, size_t buffer_size)
 {
 #if !defined(RCUTILS_AVOID_DYNAMIC_ALLOCATION)
-#ifndef RCUTILS_NO_ASSERT
+#if RCUTILS_NO_ASSERT == 0
   assert(buffer != NULL);
   assert(buffer_size >= 21);
 #endif
@@ -151,14 +153,14 @@ __rcutils_format_error_string(
   const rcutils_error_state_t * error_state)
 {
 #if !defined(RCUTILS_AVOID_DYNAMIC_ALLOCATION)
-#ifndef RCUTILS_NO_ASSERT
+#if RCUTILS_NO_ASSERT == 0
   assert(error_string != NULL);
   assert(error_state != NULL);
 #endif
   static const char format_1[] = ", at ";
   static const char format_2[] = ":";
   char line_number_buffer[21];
-#ifndef RCUTILS_NO_ASSERT
+#if RCUTILS_NO_ASSERT == 0
   static_assert(
     sizeof(error_string->str) == (
       sizeof(error_state->message) +

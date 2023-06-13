@@ -6,6 +6,7 @@ BUILD_DIR = build
 # Pushes the current directory to remote host.
 # ==================================
 
+NUM_PROCS = 4
 REMOTE_USER_HOST = "patrick@vm_comp4961_ubuntu2204"
 REMOTE_DEST_DIR = "~/remote/$(shell hostname -s)/"
 
@@ -61,4 +62,4 @@ build:
 		-DRCUTILS_SEL4CP=1 \
 		-DRCUTILS_NO_ASSERT=1 \
 		-DRCUTILS_NO_THREAD_SUPPORT=1
-	cd $(BUILD_DIR) && $(MAKE)
+	cd $(BUILD_DIR) && $(MAKE) -j $(NUM_PROCS)

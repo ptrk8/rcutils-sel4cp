@@ -11,6 +11,7 @@ extern "C"
 #cmakedefine RCUTILS_AVOID_DYNAMIC_ALLOCATION
 #cmakedefine RCUTILS_NO_THREAD_SUPPORT
 #cmakedefine RCUTILS_NO_ASSERT
+#cmakedefine RCUTILS_SEL4CP
 
 #ifdef __cplusplus
 }

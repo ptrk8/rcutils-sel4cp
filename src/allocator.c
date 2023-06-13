@@ -14,6 +14,9 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#ifdef RCUTILS_SEL4CP
+#include <string.h>
+#endif
 
 #include "rcutils/allocator.h"
 
@@ -33,21 +36,72 @@ __default_allocate(size_t size, void *state) {
     RCUTILS_CAN_RETURN_WITH_ERROR_OF(NULL);
 
     RCUTILS_UNUSED(state);
+#ifdef RCUTILS_SEL4CP
+    size_t *result = (size_t *) malloc(sizeof(size_t) + size);
+    if (result == NULL) {
+        return NULL;
+    }
+    *result = size;
+    ++result;
+    return result;
+#else
     return malloc(size);
+#endif
 }
 
 static void
 __default_deallocate(void *pointer, void *state) {
     RCUTILS_UNUSED(state);
+#ifdef RCUTILS_SEL4CP
+    if (pointer) {
+        size_t *in = pointer;
+        --in;
+        free(in);
+    }
+#else
     free(pointer);
+#endif
 }
+
+#ifdef RCUTILS_SEL4CP
+static size_t get_size(void *p) {
+    size_t *in = (size_t *) p;
+    --in;
+    return *in;
+}
+#endif
 
 static void *
 __default_reallocate(void *pointer, size_t size, void *state) {
     RCUTILS_CAN_RETURN_WITH_ERROR_OF(NULL);
 
     RCUTILS_UNUSED(state);
+#ifdef RCUTILS_SEL4CP
+    /* If pointer is NULL, realloc() is the same as malloc(). */
+    if (pointer == NULL) {
+        return __default_allocate(size, state);
+    }
+    void *const orig_ptr = pointer;
+    size_t const new_size = size;
+    size_t const orig_size = get_size(orig_ptr);
+    if (new_size == orig_size) {
+        return pointer;
+    } else {
+        void *new_ptr = __default_allocate(new_size, state);
+        if (new_ptr == NULL) {
+            return NULL;
+        }
+        if (new_size > orig_size) {
+            memcpy(new_ptr, orig_ptr, orig_size);
+        } else if (new_size < orig_size) {
+            memcpy(new_ptr, orig_ptr, new_size);
+        }
+        __default_deallocate(orig_ptr, state);
+        return new_ptr;
+    }
+#else
     return realloc(pointer, size);
+#endif
 }
 
 static void *
@@ -55,7 +109,16 @@ __default_zero_allocate(size_t number_of_elements, size_t size_of_element, void 
     RCUTILS_CAN_RETURN_WITH_ERROR_OF(NULL);
 
     RCUTILS_UNUSED(state);
+#ifdef RCUTILS_SEL4CP
+    void *ptr = __default_allocate(number_of_elements * size_of_element, state);
+    if (ptr == NULL) {
+        return NULL;
+    }
+    memset(ptr, 0, number_of_elements * size_of_element);
+    return ptr;
+#else
     return calloc(number_of_elements, size_of_element);
+#endif
 }
 
 rcutils_allocator_t

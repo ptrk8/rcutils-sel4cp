@@ -7,7 +7,7 @@ BUILD_DIR = build
 # ==================================
 
 NUM_PROCS = 4
-REMOTE_USER_HOST = "patrick@vm_comp4961_ubuntu2204"
+REMOTE_USER_HOST = "patrick@vm_comp4961_ubuntu1804"
 REMOTE_DEST_DIR = "~/remote/$(shell hostname -s)/"
 
 .PHONY: push-remote
@@ -45,6 +45,8 @@ remote: push-remote
 .PHONY: clean
 clean:
 	rm -rf $(BUILD_DIR)
+	sudo rm -rf /usr/local/lib/librcutils.a
+	sudo rm -rf /usr/local/include/rcutils
 
 # ==================================
 # Build
@@ -61,5 +63,8 @@ build:
 		-DRCUTILS_AVOID_DYNAMIC_ALLOCATION=1 \
 		-DRCUTILS_SEL4CP=1 \
 		-DRCUTILS_NO_ASSERT=1 \
-		-DRCUTILS_NO_THREAD_SUPPORT=1
+		-DRCUTILS_NO_THREAD_SUPPORT=1 \
+		-DCMAKE_MODULE_PATH=./
 	cd $(BUILD_DIR) && $(MAKE) -j $(NUM_PROCS)
+	# Install so that we can use the library in other projects.
+	cd $(BUILD_DIR) && sudo $(MAKE) install

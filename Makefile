@@ -1,6 +1,7 @@
 SHELL = /bin/zsh
 PWD_DIR = "$(shell basename $$(pwd))"
 BUILD_DIR = build
+INSTALL_DIR = ~/ros2
 
 # ==================================
 # Pushes the current directory to remote host.
@@ -45,8 +46,8 @@ remote: push-remote
 .PHONY: clean
 clean:
 	rm -rf $(BUILD_DIR)
-	sudo rm -rf /usr/local/lib/librcutils.a
-	sudo rm -rf /usr/local/include/rcutils
+	rm -rf $(INSTALL_DIR)/lib/librcutils.a
+	rm -rf $(INSTALL_DIR)/include/rcutils
 
 # ==================================
 # Build
@@ -64,7 +65,9 @@ build:
 		-DRCUTILS_SEL4CP=1 \
 		-DRCUTILS_NO_ASSERT=1 \
 		-DRCUTILS_NO_THREAD_SUPPORT=1 \
+		-DRCUTILS_DISABLE_FAULT_INJECTION=1 \
+		-DCMAKE_INSTALL_PREFIX=$(INSTALL_DIR) \
 		-DCMAKE_MODULE_PATH=./
 	cd $(BUILD_DIR) && $(MAKE) -j $(NUM_PROCS)
 	# Install so that we can use the library in other projects.
-	cd $(BUILD_DIR) && sudo $(MAKE) install
+	cd $(BUILD_DIR) && $(MAKE) install
